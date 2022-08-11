@@ -1,22 +1,8 @@
 import Vapor
 
-
-//struct Pet: ResponseEncodable {
-//    let name: String
-//    let age: Int
-//
-//    func encodeResponse(for request: Request) -> EventLoopFuture<Response> {
-//        return EventLoopFuture(eventLoop: , value: <#T##Value#>)
-//
-//    }
-//}
-//
-
-struct HelloQuery: Content {
+struct UpdateFirmware: Content {
     let currentVersion: String
 }
-
-
 
 func routes(_ app: Application) throws {
     app.get { req in
@@ -24,11 +10,15 @@ func routes(_ app: Application) throws {
     }
 
     app.get("update", "firmware") { req -> String in
-        print("Hello raw: \(req.content)")
-        let query = try req.query.decode(HelloQuery.self)
+        print("update firmware raw: \(req.content)")
+        let query = try req.query.decode(UpdateFirmware.self)
         let version = try SemanticVersion(string: query.currentVersion)
         let firmware = try service(FirmwareUpdateController.self)
             .updateFirmware(currentVersion: version)
         return String(data: firmware, encoding: .utf8) ?? "No firmware"
     }.description("provides firmware updates")
+    
+    app.get("deviceReports", "create", use: DeviceReportsController.createDeviceReport)
+    app.get("deviceReports", ":id", use: DeviceReportsController.getDeviceReport)
+    app.get("deviceReports", "latestWithDevice", ":id", use: DeviceReportsController.getLatestDeviceReport)
 }
