@@ -55,8 +55,8 @@ public struct SemanticVersion: Comparable, CustomStringConvertible {
         rhs: SemanticVersion,
         _ comparator: (UInt, UInt) -> Bool
     ) -> Bool {
-        if comparator(lhs.major, rhs.major) { return true }
-        if comparator(lhs.middle, rhs.middle) { return true }
+        if lhs.major != rhs.major { return comparator(lhs.major, rhs.major) }
+        if lhs.middle != rhs.middle { return comparator(lhs.middle, rhs.middle) }
         return comparator(lhs.minor, rhs.minor)
     }
 }
