@@ -4,10 +4,10 @@ import Vapor
 
 // configures your application
 public func configure(_ app: Application) throws {
+    service(FileSystem.self).configureWith(app)
     try database(app)
 
     app.http.server.configuration.port = 4040
-    setupServices()
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 

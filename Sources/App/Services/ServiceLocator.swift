@@ -19,9 +19,9 @@ public func removeAllServices() {
     locator.removeAll()
 }
 
-func setupServices() {
+public func setupServices() {
     locator.add(servicesList: [
-        (FirmwareUpdateController(), FirmwareUpdateController.self)
+        (FileSystem(), FileSystem.self)
     ])
 }
 
