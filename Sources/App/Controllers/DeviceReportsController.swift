@@ -30,7 +30,7 @@ public struct DeviceReportsController {
     }
     
     public static func getLatestDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
-        guard let deviceId = (req.parameters.get("id").flatMap { UUID($0) }) else {
+        guard let deviceId = req.parameters.get("id") else {
             throw Abort(.badRequest, reason: "Invalid parameter `id`")
         }
         print("getLatestDeviceReport with deviceId:\(deviceId)")
