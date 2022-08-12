@@ -44,7 +44,7 @@ public class FirmwareUpdateController: Service {
                     return nil
                 }
                 let fileName = (itemPath as NSString).deletingPathExtension
-                let parts = fileName.split(separator: "|")
+                let parts = fileName.split(separator: "_")
                 log.info("itemPath splitted: \(parts)")
                 guard parts.count == 2, let version = try? SemanticVersion(string: String(parts[1])) else {
                     log.failure("Found a firmware file with invalid format: \(itemPath)")

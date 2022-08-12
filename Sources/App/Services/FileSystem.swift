@@ -10,10 +10,10 @@ import Vapor
 
 public final class FileSystem: Service {
     private var workingDirectory = ""
-    public var serverFilesPath: String { workingDirectory + "/ServerFiles" }
+    public var serverFilesPath: String { workingDirectory + "/serverFiles" }
     public var firmwareUpdatePath: String {
         print(Unmanaged.passUnretained(self).toOpaque())
-        return serverFilesPath + "/DeviceFirmware"
+        return serverFilesPath + "/firmware"
     }
     
     public init() {}
