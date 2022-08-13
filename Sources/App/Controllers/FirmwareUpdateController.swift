@@ -23,7 +23,11 @@ public class FirmwareUpdateController: Service {
             throw Abort(.noContent)
         }
         let id = UUID()
-        log.event("Requested Update: \(id), deviceVersion: \(deviceVersion), latestVersion: \(latestVersion) at file: \(path)")
+        log.event("""
+            Requested Update: \(id), deviceId: \(query.deviceId) \
+            deviceVersion: \(deviceVersion), latestVersion: \(latestVersion) at file: \(path)
+            """
+        )
         let response = req.fileio.streamFile(at: path) { result in
             log.event("Finished Update \(id) with result: \(result)")
         }
@@ -59,4 +63,5 @@ public class FirmwareUpdateController: Service {
 fileprivate struct UpdateFirmware: Content {
     let deviceVersion: String
     let deviceType: String
+    let deviceId: String
 }
