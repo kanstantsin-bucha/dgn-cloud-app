@@ -8,6 +8,7 @@ public func configure(_ app: Application) throws {
     try database(app)
 
     app.http.server.configuration.port = 4040
+    app.routes.defaultMaxBodySize = "500kb"
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 

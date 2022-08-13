@@ -11,11 +11,12 @@ import Fluent
 
 public struct DeviceReportsController {
     public static func createDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
-        let report = DeviceReportDBModel()
-        print("create before: \(report)")
-        return report
+        let report = try req.content.decode(DeviceReportAPIModel.self)
+        print("createDeviceReport: \(report)")
+        let model = try DeviceReportDBModel(report)
+        return model
             .create(on: req.db)
-            .flatMapThrowing { try DeviceReportAPIModel(report) }
+            .flatMapThrowing { try DeviceReportAPIModel(modelWithoutData: model) }
     }
 
     public static func getDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
@@ -23,6 +24,8 @@ public struct DeviceReportsController {
             throw Abort(.badRequest, reason: "Invalid parameter `id`")
         }
         print("getDeviceReport for \(id)")
+        #warning("We are loosing Float pointing precision when passing DeviceReportAPIModel here")
+        // like 3.7 -> 3.7000000476837158
         return DeviceReportDBModel
             .find(id, on: req.db)
             .unwrap(or: Abort(.notFound))
