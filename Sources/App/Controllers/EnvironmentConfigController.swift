@@ -17,7 +17,7 @@ public struct EnvironmentConfigController {
         let query = try req.query.decode(UpdateRequestQuery.self)
         let deviceVersion = try SemanticVersion(string: query.deviceVersion)
         guard let (latestVersion, path) = try service(FileSystem.self).searchVersionedFile(
-            ofType: query.deviceType.lowercased(),
+            ofType: query.type.lowercased(),
             inStorage: .environmentConfig
         ) else {
             throw Abort(.serviceUnavailable)

@@ -10,6 +10,6 @@ import Vapor
 
 public struct UpdateRequestQuery: Content {
     let deviceVersion: String
-    let deviceType: String
+    let type: String
     let deviceId: String
 }

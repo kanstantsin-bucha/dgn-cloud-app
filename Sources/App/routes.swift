@@ -7,4 +7,5 @@ func routes(_ app: Application) throws {
     app.post("deviceReports", use: DeviceReportsController.createDeviceReport)
     app.get("deviceReports", ":id", use: DeviceReportsController.getDeviceReport)
     app.get("deviceReports", "latestWithDevice", ":id", use: DeviceReportsController.getLatestDeviceReport)
+    app.get("deviceReports", "interval", ":id", use: DeviceReportsController.getIntervalReports)
 }
