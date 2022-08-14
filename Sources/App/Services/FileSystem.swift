@@ -8,13 +8,14 @@
 import Foundation
 import Vapor
 
+public enum FileSystemStorage: String {
+    case firmware = "/firmware"
+    case environmentConfig = "/environmentConfig"
+}
+
 public final class FileSystem: Service {
     private var workingDirectory = ""
     public var serverFilesPath: String { workingDirectory + "/serverFiles" }
-    public var firmwareUpdatePath: String {
-        print(Unmanaged.passUnretained(self).toOpaque())
-        return serverFilesPath + "/firmware"
-    }
     
     public init() {}
     
@@ -32,6 +33,32 @@ public final class FileSystem: Service {
             workingDirectory: \(workingDirectory)
             """
         )
-        print(Unmanaged.passUnretained(self).toOpaque())
+    }
+    
+    public func searchVersionedFile(
+        ofType type: String,
+        inStorage storage: FileSystemStorage
+    ) throws -> (version: SemanticVersion, path: String)? {
+        let manager = FileManager.default
+        let directory = serverFilesPath + storage.rawValue
+        guard manager.fileExists(atPath: directory) else {
+            log.failure("No VersionedFile in directory at path: \(directory)")
+            throw Abort(.internalServerError)
+        }
+        return try manager.contentsOfDirectory(atPath: directory)
+            .compactMap { itemPath in
+                guard itemPath.starts(with: type, by: == ) else {
+                    return nil
+                }
+                let fileName = (itemPath as NSString).deletingPathExtension
+                let parts = fileName.split(separator: "_")
+                log.info("VersionedFile file name split: \(parts)")
+                guard parts.count == 2, let version = try? SemanticVersion(string: String(parts[1])) else {
+                    log.failure("Found a VersionedFile with invalid format: \(itemPath)")
+                    return nil
+                }
+                return (version, directory + "/" + itemPath)
+            }
+            .first
     }
 }

@@ -1,22 +1,24 @@
 //
-//  FirmwareUpdateController.swift
+//  EnvironmentConfigController.swift
 //  
 //
-//  Created by Kanstantsin Bucha on 18/06/2022.
+//  Created by Kanstantsin Bucha on 14/08/2022.
 //
 
 import Foundation
 import Vapor
+import Fluent
 
-public struct FirmwareUpdateController {
+public struct EnvironmentConfigController {
     private static let maxSimultaneousUpdatesCount = 20
     private static var runningUpdatesCount = 0
-    public static func getFirmwareUpdate(req: Request) throws -> Response {
+    
+    public static func getConfigUpdate(req: Request) throws -> Response {
         let query = try req.query.decode(UpdateRequestQuery.self)
         let deviceVersion = try SemanticVersion(string: query.deviceVersion)
         guard let (latestVersion, path) = try service(FileSystem.self).searchVersionedFile(
             ofType: query.deviceType.lowercased(),
-            inStorage: .firmware
+            inStorage: .environmentConfig
         ) else {
             throw Abort(.serviceUnavailable)
         }
@@ -40,3 +42,5 @@ public struct FirmwareUpdateController {
         return response
     }
 }
+
+
