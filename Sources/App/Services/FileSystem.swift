@@ -43,7 +43,7 @@ public final class FileSystem: Service {
         let directory = serverFilesPath + storage.rawValue
         guard manager.fileExists(atPath: directory) else {
             log.failure("No VersionedFile in directory at path: \(directory)")
-            throw Abort(.internalServerError)
+            throw Abort(.internalServerError, reason: "No VersionedFile in directory at path: \(directory)")
         }
         return try manager.contentsOfDirectory(atPath: directory)
             .compactMap { itemPath in
