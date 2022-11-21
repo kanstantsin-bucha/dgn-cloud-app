@@ -5,9 +5,19 @@ Next generation cloud app based on Vapor
 # Implemented
 
 * Initial Database layer implementation
-* WIP: DeviceReports endpoint
-* WIP: FirmwareUpdate endpoint
 
 # Todo
+
+- [ ] Integrate user schema on database creation
+- [ ] Create User creation endpoint
+- [ ] Create User logIn endpoint
+- [ ] Create User delete endpoint
+
+- [ ] Create Device API and DB models
+- [ ] Integrate Device schema on database creation
+
+- [ ] Create User add Device endpoint
+- [ ] Create User remove Device endpoint
+ 
 
 

@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/fluent.git",
       "state" : {
-        "revision" : "ea707ee318066a073c95b2b2df1aa640fcb67f9e",
-        "version" : "4.4.0"
+        "revision" : "26c446002f03c5ab34b20d86873014ef3d92d0da",
+        "version" : "4.5.0"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/fluent-mysql-driver.git",
       "state" : {
-        "revision" : "549eb759bf1067f461f73f52ae8dcc467ca151be",
-        "version" : "4.1.0"
+        "revision" : "62f90ee2c665d1a271ba182a78738bbf2f129de6",
+        "version" : "4.2.0"
       }
     },
     {
@@ -109,6 +109,15 @@
       }
     },
     {
+      "identity" : "swift-atomics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-atomics.git",
+      "state" : {
+        "revision" : "919eb1d83e02121cdb434c7bfc1f0c66ef17febe",
+        "version" : "1.0.2"
+      }
+    },
+    {
       "identity" : "swift-backtrace",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swift-server/swift-backtrace.git",
@@ -158,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "124119f0bb12384cef35aa041d7c3a686108722d",
-        "version" : "2.40.0"
+        "revision" : "edfceecba13d68c1c993382806e72f7e96feaa86",
+        "version" : "2.44.0"
       }
     },
     {
@@ -212,8 +221,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "12e2e7460ab912b65fb7a0fe47e4f638a7d5e642",
-        "version" : "4.62.0"
+        "revision" : "2d54398d50951f177eb899c05154636e381f3bc6",
+        "version" : "4.67.4"
       }
     },
     {

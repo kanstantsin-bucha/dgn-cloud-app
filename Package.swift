@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.7
 import PackageDescription
 
 let package = Package(
@@ -7,9 +7,9 @@ let package = Package(
        .macOS(.v12)
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
-        .package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.0.0"),
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0")
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.5.0"),
+        .package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.2.0"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.67.4")
     ],
     targets: [
         .target(
