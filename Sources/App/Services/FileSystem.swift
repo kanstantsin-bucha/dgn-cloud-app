@@ -11,6 +11,7 @@ import Vapor
 public enum FileSystemStorage: String {
     case firmware = "/firmware"
     case environmentConfig = "/environmentConfig"
+    case certificates = "/certificates"
 }
 
 public final class FileSystem: Service {
@@ -25,7 +26,7 @@ public final class FileSystem: Service {
             workingDirectory = "/var/www/dg-cloud"
             
         default:
-            workingDirectory = FileManager.default.currentDirectoryPath
+            workingDirectory = "/Users/kanstantsinbucha/I/coder/dg/cloud/dgn-cloud-app"
         }
         
         log.info("""
@@ -33,6 +34,14 @@ public final class FileSystem: Service {
             workingDirectory: \(workingDirectory)
             """
         )
+    }
+    
+    public func filePath(
+        fileName: String,
+        inStorage storage: FileSystemStorage
+    ) -> String {
+        let directory = serverFilesPath + storage.rawValue
+        return directory + "/" + fileName
     }
     
     public func searchVersionedFile(

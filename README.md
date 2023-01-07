@@ -8,6 +8,8 @@ Next generation cloud app based on Vapor
 
 # Todo
 
+- [ ] reimplement using https://docs.vapor.codes/security/authentication/
+
 - [ ] Integrate user schema on database creation
 - [ ] Create User creation endpoint
 - [ ] Create User logIn endpoint

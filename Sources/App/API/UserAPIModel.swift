@@ -12,18 +12,22 @@ public struct UserAPIModel: Authenticatable, Content, CustomStringConvertible {
     public let id: UUID? // Id under that report was stored on the server
     public let updatedAt: Date? // Date when User record was stored on the server (rewrited)
     public let data: UserAccountData // Data of the represented User account
+    public let userName: String
+    public let password: String?
     
     #warning("Temporary")
     // TODO: - remove after implementation
-    init(id: UUID? = nil, updatedAt: Date? = nil, data: UserAccountData) {
-        self.id = id
-        self.updatedAt = updatedAt
-        self.data = data
-    }
+//    init(id: UUID? = nil, updatedAt: Date? = nil, data: UserAccountData) {
+//        self.id = id
+//        self.updatedAt = updatedAt
+//        self.data = data
+//    }
     
     public init(_ model: UserDBModel) {
         id = model.id
         updatedAt = model.updatedAt
+        userName = model.userName
+        password = nil
         data = UserAccountData(model)
     }
     
