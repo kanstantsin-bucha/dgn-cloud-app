@@ -22,9 +22,7 @@ struct UserController: RouteCollection {
             .group("me") { usr in
                 usr.get(use: me)
             }
-        users.group("create") { usr in
-            usr.post(use: create)
-        }
+        users.post(use: create)
     }
      
     func me(req: Request) throws -> EventLoopFuture<MeAPIModel> {
