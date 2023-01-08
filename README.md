@@ -8,18 +8,10 @@ Next generation cloud app based on Vapor
 
 # Todo
 
-- [ ] reimplement using https://docs.vapor.codes/security/authentication/
+- [x] reimplement using https://docs.vapor.codes/security/authentication/
 
-- [ ] Integrate user schema on database creation
-- [ ] Create User creation endpoint
-- [ ] Create User logIn endpoint
-- [ ] Create User delete endpoint
+- [ ] Delete device from DB when User delete a device (right now it will be removed from User only)
 
-- [ ] Create Device API and DB models
-- [ ] Integrate Device schema on database creation
-
-- [ ] Create User add Device endpoint
-- [ ] Create User remove Device endpoint
  
 
 
