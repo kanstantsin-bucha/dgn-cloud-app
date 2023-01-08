@@ -9,8 +9,18 @@ import Foundation
 import Vapor
 import Fluent
 
-public struct DeviceReportsController {
-    public static func createDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
+public struct DeviceReportsController: RouteCollection {
+    public func boot(routes: RoutesBuilder) throws {
+        routes.group("deviceReports") { routes in
+            routes.post(use: createDeviceReport)
+            let protected = routes.grouped(JWTBearerAuthenticator())
+            protected.get(":id", use: getDeviceReport)
+            protected.get("latestWithDevice", ":id", use: getLatestDeviceReport)
+            protected.get("interval", ":id", use: getIntervalReports)
+        }
+    }
+    
+    public func createDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
         let report = try req.content.decode(DeviceReportAPIModel.self)
         log.event("createDeviceReport: \(report)")
         let model = try DeviceReportDBModel(report)
@@ -19,7 +29,8 @@ public struct DeviceReportsController {
             .flatMapThrowing { try DeviceReportAPIModel(modelWithoutData: model) }
     }
 
-    public static func getDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
+    public func getDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
+        guard req.auth.has(UserDBModel.self) else { throw Abort(.unauthorized) }
         guard let id = (req.parameters.get("id").flatMap { UUID($0) }) else {
             log.event("getDeviceReport: Invalid parameter id: \(String(describing: req.parameters.get("id")))")
             throw Abort(.badRequest, reason: "Invalid parameter `id`")
@@ -33,7 +44,8 @@ public struct DeviceReportsController {
             .flatMapThrowing { try DeviceReportAPIModel($0) }
     }
     
-    public static func getLatestDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
+    public func getLatestDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
+        guard req.auth.has(UserDBModel.self) else { throw Abort(.unauthorized) }
         guard let deviceId = req.parameters.get("id") else {
             throw Abort(.badRequest, reason: "Invalid parameter `id`")
         }
@@ -47,7 +59,8 @@ public struct DeviceReportsController {
             .flatMapThrowing { try DeviceReportAPIModel($0) }
     }
     
-    public static func getIntervalReports(req: Request) throws -> EventLoopFuture<[DeviceReportAPIModel]> {
+    public func getIntervalReports(req: Request) throws -> EventLoopFuture<[DeviceReportAPIModel]> {
+        guard req.auth.has(UserDBModel.self) else { throw Abort(.unauthorized) }
         let maxReportsCount = 50
         guard let deviceId = req.parameters.get("id") else {
             throw Abort(.badRequest, reason: "Invalid parameter `id`")
@@ -75,7 +88,7 @@ public struct DeviceReportsController {
     
     // MARK: - Private methods
     
-    private static func deflateArray<Element>(_ incoming: [Element], maxElements: Int) ->  [Element] {
+    private func deflateArray<Element>(_ incoming: [Element], maxElements: Int) ->  [Element] {
         #warning("This method login should be improved - array elements count always bigger than of maxElements")
         guard incoming.count > maxElements else { return incoming }
         let divider = (incoming.count / (maxElements - 2))
@@ -89,7 +102,7 @@ public struct DeviceReportsController {
         return result
     }
     
-    private static func calculateStartDate(lastHoursCount: UInt) throws -> Date {
+    private func calculateStartDate(lastHoursCount: UInt) throws -> Date {
         let calendar = Calendar.current
         let start = Date(timeIntervalSinceNow: TimeInterval(lastHoursCount) * -3600)
         var components = calendar.dateComponents([.era, .year, .month, .day, .hour], from: start)
