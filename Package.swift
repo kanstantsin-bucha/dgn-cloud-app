@@ -9,7 +9,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/vapor/fluent.git", from: "4.5.0"),
         .package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.2.0"),
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.67.4"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.68.0"),
         .package(url: "https://github.com/vapor/jwt.git", from: "4.2.1")
     ],
     targets: [

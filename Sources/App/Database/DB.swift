@@ -24,6 +24,7 @@ enum DB {
         
         app.migrations.add(CreateDeviceReportsTableMigration(), to: .mysql)
         app.migrations.add(CreateUsersTableMigration(), to: .mysql)
+        app.migrations.add(CreateDevicesTableMigration(), to: .mysql)
         
         try app.autoMigrate().wait()
     }

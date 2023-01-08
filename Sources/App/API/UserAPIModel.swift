@@ -15,14 +15,6 @@ public struct UserAPIModel: Authenticatable, Content, CustomStringConvertible {
     public let userName: String
     public let password: String?
     
-    #warning("Temporary")
-    // TODO: - remove after implementation
-//    init(id: UUID? = nil, updatedAt: Date? = nil, data: UserAccountData) {
-//        self.id = id
-//        self.updatedAt = updatedAt
-//        self.data = data
-//    }
-    
     public init(_ model: UserDBModel) {
         id = model.id
         updatedAt = model.updatedAt
@@ -40,15 +32,8 @@ public struct UserAPIModel: Authenticatable, Content, CustomStringConvertible {
 }
 
 public struct UserAccountData: Codable {
-    public let loggedInAt: Date? // Date when User last log in was occured on the server
+    public let loggedInAt: Date? // Date when User last log in was occurred on the server
     public let devicesIDs: [UUID] // IDs of all devices user connected to the User account
-    
-    #warning("Temporary")
-    // TODO: - remove after implementation
-    init() {
-        loggedInAt = nil
-        devicesIDs = []
-    }
     
     public init(_ model: UserDBModel) {
         loggedInAt = model.loggedInAt

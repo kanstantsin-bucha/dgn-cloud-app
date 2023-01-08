@@ -13,18 +13,16 @@ import Fluent
 struct UserController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let users = routes.grouped("users")
+        users.post(use: create)
         users.group("login") { usr in
             usr.post(use: login)
         }
-        
-        users
-            .grouped(JWTBearerAuthenticator())
-            .group("me") { usr in
-                usr.get(use: me)
-            }
-        users.post(use: create)
+        let protected = users.grouped(JWTBearerAuthenticator())
+        protected.group("me") { usr in
+            usr.get(use: me)
+        }
     }
-     
+    
     func me(req: Request) throws -> EventLoopFuture<MeAPIModel> {
         let user = try req.auth.require(UserDBModel.self)
         let userName = user.userName
