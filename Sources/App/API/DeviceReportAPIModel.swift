@@ -14,7 +14,7 @@ public struct DeviceReportAPIModel: Content, CustomStringConvertible {
     public let data: DeviceReportData? // Measured values
     public let createdAt: Date? // Date when report record was stored on the server
     
-    public init(_ model: DeviceReportDBModel) throws {
+    public init(_ model: DeviceReportDBModel) {
         id = model.id
         deviceId = model.deviceID
         data = DeviceReportData(model)
@@ -23,7 +23,7 @@ public struct DeviceReportAPIModel: Content, CustomStringConvertible {
     
     /// We use it to send response on POST request - to not pass device data back to device
     /// - Parameter modelWithId: A database model that represents the source
-    public init(modelWithoutData model: DeviceReportDBModel) throws {
+    public init(modelWithoutData model: DeviceReportDBModel) {
         id = model.id
         deviceId = model.deviceID
         data = nil

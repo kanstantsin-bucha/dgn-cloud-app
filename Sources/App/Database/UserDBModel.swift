@@ -10,7 +10,7 @@ import Fluent
 import Vapor
 
 fileprivate enum UserDBKeys: String {
-    case devicesIDs
+    case deviceAliasIDs
     case createdAt
     case updatedAt
     case loggedInAt
@@ -53,13 +53,13 @@ public final class UserDBModel: Model, CustomStringConvertible {
     @Timestamp(key: UserDBKeys.updatedAt.key, on: .update)
     public var updatedAt: Date?
     
-    @Field(key: UserDBKeys.devicesIDs.key)
-    public var devicesIDs: [UUID]?
+    @Field(key: UserDBKeys.deviceAliasIDs.key)
+    public var deviceAliasIDs: [UUID]?
 
     public var description: String {
         return """
             <UserDBModel id: \(String(describing: id)), updatedAt: \(String(describing: updatedAt)), \
-            data: loggedInAt: \(String(describing: loggedInAt)), devicesIDs: \(String(describing: devicesIDs))>
+            data: loggedInAt: \(String(describing: loggedInAt)), devicesIDs: \(String(describing: deviceAliasIDs))>
             """
     }
     
@@ -73,9 +73,8 @@ public final class UserDBModel: Model, CustomStringConvertible {
         userName = model.userName
         password = try Bcrypt.hash(pass)
         loggedInAt = nil
-        devicesIDs = nil
         let data = model.data
-        devicesIDs = data.devicesIDs
+        deviceAliasIDs = data?.deviceAliasIDs ?? []
     }
 }
 
@@ -101,7 +100,7 @@ struct CreateUsersTableMigration: AsyncMigration {
             .field(UserDBKeys.loggedInAt.key, .datetime)
             .field(UserDBKeys.createdAt.key, .datetime)
             .field(UserDBKeys.updatedAt.key, .datetime)
-            .field(UserDBKeys.devicesIDs.key, .array(of: .uuid))
+            .field(UserDBKeys.deviceAliasIDs.key, .array(of: .uuid))
             .create()
         
         print("prepare CreateUsersTableMigration finished")

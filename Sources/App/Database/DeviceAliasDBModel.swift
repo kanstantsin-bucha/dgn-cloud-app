@@ -15,7 +15,7 @@ fileprivate enum DeviceDBKeys: String {
     case loggedInAt
     case name
     case type
-    case token
+    case deviceID
     
     var key: FieldKey {
         return .string(self.rawValue)
@@ -24,7 +24,7 @@ fileprivate enum DeviceDBKeys: String {
 
 // {data: {"devicesIds": ["0MLwpEtAKkTSU54f"]}, "createdAt":1640236388,"_id":"0MLwpEtAKkTSU54f"}]}
 
-public final class DeviceDBModel: Model, CustomStringConvertible {
+public final class DeviceAliasDBModel: Model, CustomStringConvertible {
     // Name of the table or collection.
     public static let schema = "devices"
 
@@ -41,8 +41,8 @@ public final class DeviceDBModel: Model, CustomStringConvertible {
     @Field(key: DeviceDBKeys.type.key)
     public var type: String
     
-    @Field(key: DeviceDBKeys.token.key)
-    public var token: String
+    @Field(key: DeviceDBKeys.deviceID.key)
+    public var deviceID: String
     
     @Timestamp(key: DeviceDBKeys.createdAt.key, on: .create)
     public var createdAt: Date?
@@ -54,6 +54,7 @@ public final class DeviceDBModel: Model, CustomStringConvertible {
         return """
             <DeviceDBModel id: \(String(describing: id)), name: \(String(describing: name)), \
             type: \(String(describing: type)), \
+            deviceID: \(deviceID), \
             updatedAt: \(String(describing: updatedAt)), \
             createdAt: \(String(describing: createdAt)))>
             """
@@ -61,22 +62,22 @@ public final class DeviceDBModel: Model, CustomStringConvertible {
     
     public init() {}
 
-    public init(_ model: DeviceAPIModel) {
+    public init(_ model: DeviceAliasAPIModel) {
         id = model.id ?? UUID()
         name = model.name
         type = model.type
-        token = model.token
+        deviceID = model.deviceID
     }
 }
 
 struct CreateDevicesTableMigration: AsyncMigration {
     func prepare(on database: Database) async throws {
         print("prepare CreateDevicesTableMigration started")
-        try await database.schema(DeviceDBModel.schema)
+        try await database.schema(DeviceAliasDBModel.schema)
             .id()
             .field(DeviceDBKeys.name.key, .string)
             .field(DeviceDBKeys.type.key, .string)
-            .field(DeviceDBKeys.token.key, .string)
+            .field(DeviceDBKeys.deviceID.key, .string)
             .field(DeviceDBKeys.createdAt.key, .datetime)
             .field(DeviceDBKeys.updatedAt.key, .datetime)
             .create()

@@ -15,8 +15,8 @@ public struct DeviceReportsController: RouteCollection {
             routes.post(use: createDeviceReport)
             let protected = routes.grouped(JWTBearerAuthenticator())
             protected.get(":id", use: getDeviceReport)
-            protected.get("latestWithDevice", ":id", use: getLatestDeviceReport)
-            protected.get("interval", ":id", use: getIntervalReports)
+            protected.get("latestWithDevice", ":aliasID") { try await getLatestDeviceReport(req: $0) }
+            protected.get("interval", ":aliasID") { try await getIntervalReports(req: $0) }
         }
     }
     
@@ -31,59 +31,64 @@ public struct DeviceReportsController: RouteCollection {
 
     public func getDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
         guard req.auth.has(UserDBModel.self) else { throw Abort(.unauthorized) }
-        guard let id = (req.parameters.get("id").flatMap { UUID($0) }) else {
-            log.event("getDeviceReport: Invalid parameter id: \(String(describing: req.parameters.get("id")))")
+        guard let uuid = req.parameters.get("id").flatMap(UUID.init(uuidString:)) else {
+            log.event("getDeviceReport: Invalid parameter aliasID: \(String(describing: req.parameters.get("aliasID")))")
             throw Abort(.badRequest, reason: "Invalid parameter `id`")
         }
-        log.event("getDeviceReport for \(id)")
+        log.event("getDeviceReport for \(uuid)")
         #warning("We are loosing Float pointing precision when passing DeviceReportAPIModel here")
         // like 3.7 -> 3.7000000476837158
         return DeviceReportDBModel
-            .find(id, on: req.db)
+            .find(uuid, on: req.db)
             .unwrap(or: Abort(.notFound))
             .flatMapThrowing { try DeviceReportAPIModel($0) }
     }
     
-    public func getLatestDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
+    public func getLatestDeviceReport(req: Request) async throws -> DeviceReportAPIModel {
         guard req.auth.has(UserDBModel.self) else { throw Abort(.unauthorized) }
-        guard let deviceId = req.parameters.get("id") else {
-            throw Abort(.badRequest, reason: "Invalid parameter `id`")
+        guard let aliasID = req.parameters.get("aliasID").flatMap(UUID.init(uuidString:)) else {
+            throw Abort(.badRequest, reason: "Invalid parameter `aliasID`")
         }
-        print("getLatestDeviceReport with deviceId:\(deviceId)")
-        return DeviceReportDBModel
+        log.event("getLatestDeviceReport with aliasID:\(aliasID)")
+        guard let aliasDBModel = try await DeviceAliasDBModel.find(aliasID, on: req.db) else {
+            throw Abort(.notFound)
+        }
+        log.event("getLatestDeviceReport with deviceID:\(aliasDBModel.deviceID)")
+        guard let deviceReportDBModel = try await DeviceReportDBModel
             .query(on: req.db)
-            .filter(\.$deviceID == deviceId)
+            .filter(\.$deviceID == aliasDBModel.deviceID)
             .sort(\.$createdAt, .descending)
             .first()
-            .unwrap(or: Abort(.notFound))
-            .flatMapThrowing { try DeviceReportAPIModel($0) }
+        else {
+            throw Abort(.notFound)
+        }
+        return DeviceReportAPIModel(deviceReportDBModel)
     }
     
-    public func getIntervalReports(req: Request) throws -> EventLoopFuture<[DeviceReportAPIModel]> {
+    public func getIntervalReports(req: Request) async throws -> [DeviceReportAPIModel] {
         guard req.auth.has(UserDBModel.self) else { throw Abort(.unauthorized) }
         let maxReportsCount = 50
-        guard let deviceId = req.parameters.get("id") else {
-            throw Abort(.badRequest, reason: "Invalid parameter `id`")
+        guard let aliasID = req.parameters.get("aliasID").flatMap(UUID.init(uuidString:)) else {
+            throw Abort(.badRequest, reason: "Invalid parameter `aliasID`")
         }
         let lastHoursCount = try req.query.decode(IntervalChatQuery.self).lastHoursCount
         guard lastHoursCount > 0 && lastHoursCount < 25 else {
             throw Abort(.expectationFailed, reason: "lastHoursCount is not in range 1...24")
         }
         let intervalStartDate = try calculateStartDate(lastHoursCount: lastHoursCount)
-        log.event("getIntervalChartReports with deviceId:\(deviceId) for \(lastHoursCount) last hours")
-        var dbModels: [Result<DeviceReportDBModel, Error>] = []
-        return DeviceReportDBModel
+        log.event("getIntervalChartReports with aliasID:\(aliasID) for \(lastHoursCount) last hours")
+        guard let aliasDBModel = try await DeviceAliasDBModel.find(aliasID, on: req.db) else {
+            throw Abort(.notFound)
+        }
+        log.event("getIntervalChartReports with deviceID:\(aliasDBModel.deviceID)")
+        let dbModels = try await DeviceReportDBModel
             .query(on: req.db)
-            .filter(\.$deviceID == deviceId)
+            .filter(\.$deviceID == aliasDBModel.deviceID)
             .filter(\.$createdAt >= intervalStartDate)
-            .sort(\.$createdAt, .ascending)
-            .limit(2000)
-            .all { model in
-                dbModels.append(model)
-            }.flatMapThrowing {
-                let apiModels = try dbModels.map { try DeviceReportAPIModel($0.get()) }
-                return deflateArray(apiModels, maxElements: maxReportsCount)
-            }
+            .limit(1500)
+            .all()
+        let deflated = deflateArray(dbModels, maxElements: maxReportsCount)
+        return try deflated.map { try DeviceReportAPIModel($0) }
     }
     
     // MARK: - Private methods

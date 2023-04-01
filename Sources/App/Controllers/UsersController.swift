@@ -25,16 +25,15 @@ struct UserController: RouteCollection {
     
     func me(req: Request) throws -> EventLoopFuture<MeAPIModel> {
         let user = try req.auth.require(UserDBModel.self)
-        let userName = user.userName
-        let deviceIDs = user.devicesIDs ?? []
-        return DeviceDBModel.query(on: req.db)
-            .filter(\.$id ~~ deviceIDs)
+        let deviceAliasIDs = user.deviceAliasIDs ?? []
+        return DeviceAliasDBModel.query(on: req.db)
+            .filter(\.$id ~~ deviceAliasIDs)
             .all()
-            .map { devices in
+            .map { devicesAliasesDB in
                 return MeAPIModel(
                     id: user.id!,
                     userName: user.userName,
-                    devices: devices.map { DeviceAPIModel($0) }
+                    devicesAliases: devicesAliasesDB.map { DeviceAliasAPIModel($0) }
                 )
             }
     }
