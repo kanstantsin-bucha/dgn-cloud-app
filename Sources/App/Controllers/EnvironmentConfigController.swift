@@ -9,11 +9,16 @@ import Foundation
 import Vapor
 import Fluent
 
-public struct EnvironmentConfigController {
-    private static let maxSimultaneousUpdatesCount = 20
-    private static var runningUpdatesCount = 0
+public class EnvironmentConfigController: RouteCollection {
+    private let maxSimultaneousUpdatesCount = 20
+    private var runningUpdatesCount = 0
+    public func boot(routes: RoutesBuilder) throws {
+        routes.group("environmentConfig") { routes in
+            routes.get("update", use: getConfigUpdate)
+        }
+    }
     
-    public static func getConfigUpdate(req: Request) throws -> Response {
+    public func getConfigUpdate(req: Request) throws -> Response {
         let query = try req.query.decode(UpdateRequestQuery.self)
         let deviceVersion = try SemanticVersion(string: query.deviceVersion)
         guard let (latestVersion, path) = try service(FileSystem.self).searchVersionedFile(
@@ -35,8 +40,8 @@ public struct EnvironmentConfigController {
             deviceVersion: \(deviceVersion), latestVersion: \(latestVersion) at file: \(path)
             """
         )
-        let response = req.fileio.streamFile(at: path) { result in
-            runningUpdatesCount -= 1
+        let response = req.fileio.streamFile(at: path) { [weak self] result in
+            self?.runningUpdatesCount -= 1
             log.event("Finished Update \(id) with result: \(result)")
         }
         return response

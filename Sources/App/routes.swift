@@ -5,6 +5,6 @@ func routes(_ app: Application) throws {
     try app.register(collection: UserController())
     try app.register(collection: DeviceController())
     try app.register(collection: DeviceReportsController())
-    app.get("firmware", "update", use: FirmwareUpdateController.getFirmwareUpdate)
-    app.get("environmentConfig", "update", use: EnvironmentConfigController.getConfigUpdate)
+    try app.register(collection: EnvironmentConfigController())
+    try app.register(collection: FirmwareUpdateController())
 }
