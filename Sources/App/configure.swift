@@ -10,7 +10,7 @@ public func configure(_ app: Application) throws {
 
     app.http.server.configuration.port = 4040
     // Uncomment to serve requests from local network
-    app.http.server.configuration.address = .hostname("192.168.0.193", port: 4040)
+    app.http.server.configuration.address = .hostname("192.168.0.192", port: 4040)
     app.routes.defaultMaxBodySize = "500kb"
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
