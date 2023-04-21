@@ -26,7 +26,12 @@ public final class FileSystem: Service {
             workingDirectory = "/var/www/dg-cloud"
             
         default:
-            workingDirectory = "/Users/kanstantsinbucha/I/coder/dg/cloud/dgn-cloud-app"
+            workingDirectory = URL(fileURLWithPath: String(#filePath))
+                .deletingLastPathComponent()
+                .deletingLastPathComponent()
+                .deletingLastPathComponent()
+                .deletingLastPathComponent()
+                .relativePath
         }
         
         log.info("""
