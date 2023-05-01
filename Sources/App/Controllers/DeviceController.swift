@@ -39,14 +39,14 @@ struct DeviceController: RouteCollection {
     
     func addDevice(req: Request) async throws -> MeAPIModel {
         let user = try req.auth.require(UserDBModel.self)
-        let deviceAliasAPIModel = try req.content.decode(DeviceAliasAPIModel.self)
+        let createDeviceAPIModel = try req.content.decode(CreateDeviceAPIModel.self)
         try await verifyThatCanAdd(
-            deviceID: deviceAliasAPIModel.deviceID,
+            deviceID: createDeviceAPIModel.deviceID,
             user: user,
             db: req.db
         )
         
-        let model = DeviceAliasDBModel(deviceAliasAPIModel)
+        let model = DeviceAliasDBModel(createDeviceAPIModel)
         guard let deviceAliasID = model.id else { throw Abort(.internalServerError) }
         try await model.create(on: req.db)
     

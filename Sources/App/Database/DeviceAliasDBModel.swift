@@ -62,7 +62,7 @@ public final class DeviceAliasDBModel: Model, CustomStringConvertible {
     
     public init() {}
 
-    public init(_ model: DeviceAliasAPIModel) {
+    public init(_ model: CreateDeviceAPIModel) {
         id = model.id ?? UUID()
         name = model.name
         type = model.type
