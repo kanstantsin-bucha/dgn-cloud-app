@@ -13,7 +13,7 @@ import Fluent
 struct UserController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let users = routes.grouped("users")
-        users.post(use: create)
+        users.post() { try await create(req: $0) }
         users.group("login") { usr in
             usr.post(use: login)
         }
@@ -63,13 +63,14 @@ struct UserController: RouteCollection {
             .unwrap(or: Abort(.notFound))
     }
     
-    func create(req: Request) throws -> EventLoopFuture<UserAPIModel> {
-        let user = try req.content.decode(UserAPIModel.self)
-        let model = try UserDBModel(user)
-        return model
-            .create(on: req.db)
-            .flatMapThrowing {
-                return UserAPIModel(model)
-            }
+    func create(req: Request) async throws -> MeAPIModel {
+        let userAPI = try req.content.decode(UserAPIModel.self)
+        let user = try UserDBModel(userAPI)
+        try await user.create(on: req.db)
+        return MeAPIModel(
+            id: user.id!,
+            userName: user.userName,
+            devicesAliases: []
+        )
     }
 }
