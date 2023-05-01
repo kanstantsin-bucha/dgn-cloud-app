@@ -14,24 +14,30 @@ struct DeviceController: RouteCollection {
         let protected = routes.grouped("devices")
             .grouped(JWTBearerAuthenticator())
         protected.post() { try await addDevice(req: $0) }
-        protected.delete(":aliasID", use: deleteDevice)
+        protected.delete(":aliasID") { try await deleteDevice(req: $0) }
     }
     
-    func deleteDevice(req: Request) throws -> EventLoopFuture<UserAPIModel> {
+    func deleteDevice(req: Request) async throws -> MeAPIModel  {
         let user = try req.auth.require(UserDBModel.self)
         guard let deviceAliasID = req.parameters.get("aliasID").flatMap(UUID.init(uuidString:)) else {
-            log.event("deleteDevice: Invalid parameter deviceAliasID: \(String(describing: req.parameters.get("deviceAliasID")))")
-            throw Abort(.badRequest, reason: "Invalid parameter `deviceAliasID`")
+            log.event("deleteDevice: Invalid parameter aliasID: \(String(describing: req.parameters.get("aliasID")))")
+            throw Abort(.badRequest, reason: "Invalid parameter `aliasID`")
         }
-        user.deviceAliasIDs = (user.deviceAliasIDs ?? []).filter { $0 != deviceAliasID }
-        return user
-            .save(on: req.db)
-            .flatMapThrowing {
-                return UserAPIModel(user)
-            }
+        let deviceAliasIDs = (user.deviceAliasIDs ?? []).filter { $0 != deviceAliasID }
+        user.deviceAliasIDs = deviceAliasIDs
+        try await user.save(on: req.db)
+        // TODO: delete device if there are 0 aliases to it
+        let deviceAliasesDB = try await DeviceAliasDBModel.query(on: req.db)
+            .filter(\.$id ~~ deviceAliasIDs)
+            .all()
+        return MeAPIModel(
+            id: user.id!,
+            userName: user.userName,
+            devicesAliases: deviceAliasesDB.map { DeviceAliasAPIModel($0) }
+        )
     }
     
-    func addDevice(req: Request) async throws -> DeviceAliasAPIModel {
+    func addDevice(req: Request) async throws -> MeAPIModel {
         let user = try req.auth.require(UserDBModel.self)
         let deviceAliasAPIModel = try req.content.decode(DeviceAliasAPIModel.self)
         try await verifyThatCanAdd(
@@ -44,11 +50,18 @@ struct DeviceController: RouteCollection {
         guard let deviceAliasID = model.id else { throw Abort(.internalServerError) }
         try await model.create(on: req.db)
     
-        var ids = user.deviceAliasIDs ?? []
-        ids.append(deviceAliasID)
-        user.deviceAliasIDs = ids
+        var deviceAliasIDs = user.deviceAliasIDs ?? []
+        deviceAliasIDs.append(deviceAliasID)
+        user.deviceAliasIDs = deviceAliasIDs
         try await user.save(on: req.db)
-        return DeviceAliasAPIModel(model)
+        let deviceAliasesDB = try await DeviceAliasDBModel.query(on: req.db)
+            .filter(\.$id ~~ deviceAliasIDs)
+            .all()
+        return MeAPIModel(
+            id: user.id!,
+            userName: user.userName,
+            devicesAliases: deviceAliasesDB.map { DeviceAliasAPIModel($0) }
+        )
     }
     
     private func verifyThatCanAdd(deviceID: String, user: UserDBModel, db: Database) async throws {
