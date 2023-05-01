@@ -64,8 +64,8 @@ struct UserController: RouteCollection {
     }
     
     func create(req: Request) async throws -> MeAPIModel {
-        let userAPI = try req.content.decode(UserAPIModel.self)
-        let user = try UserDBModel(userAPI)
+        let createUserAPI = try req.content.decode(CreateUserAPIModel.self)
+        let user = try UserDBModel(createUserAPI)
         try await user.create(on: req.db)
         return MeAPIModel(
             id: user.id!,

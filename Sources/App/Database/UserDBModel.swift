@@ -65,16 +65,15 @@ public final class UserDBModel: Model, CustomStringConvertible {
     
     public init() {}
 
-    public init(_ model: UserAPIModel) throws {
+    public init(_ model: CreateUserAPIModel) throws {
         guard let pass = model.password else {
             throw Abort(.internalServerError)
         }
-        id = model.id ?? UUID()
+        id = UUID()
         userName = model.userName
         password = try Bcrypt.hash(pass)
         loggedInAt = nil
-        let data = model.data
-        deviceAliasIDs = data?.deviceAliasIDs ?? []
+        deviceAliasIDs = []
     }
 }
 
