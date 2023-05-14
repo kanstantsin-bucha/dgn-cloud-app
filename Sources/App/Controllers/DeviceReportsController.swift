@@ -26,7 +26,7 @@ public struct DeviceReportsController: RouteCollection {
         let model = try DeviceReportDBModel(report)
         return model
             .create(on: req.db)
-            .flatMapThrowing { try DeviceReportAPIModel(modelWithoutData: model) }
+            .flatMapThrowing { DeviceReportAPIModel(modelWithoutData: model) }
     }
 
     public func getDeviceReport(req: Request) throws -> EventLoopFuture<DeviceReportAPIModel> {
@@ -41,7 +41,7 @@ public struct DeviceReportsController: RouteCollection {
         return DeviceReportDBModel
             .find(uuid, on: req.db)
             .unwrap(or: Abort(.notFound))
-            .flatMapThrowing { try DeviceReportAPIModel($0) }
+            .flatMapThrowing { DeviceReportAPIModel($0) }
     }
     
     public func getLatestDeviceReport(req: Request) async throws -> DeviceReportAPIModel {
@@ -88,7 +88,7 @@ public struct DeviceReportsController: RouteCollection {
             .limit(1500)
             .all()
         let deflated = deflateArray(dbModels, maxElements: maxReportsCount)
-        return try deflated.map { try DeviceReportAPIModel($0) }
+        return try deflated.map { DeviceReportAPIModel($0) }
     }
     
     // MARK: - Private methods
