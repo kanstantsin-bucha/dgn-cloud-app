@@ -6,6 +6,9 @@ let package = Package(
     platforms: [
        .macOS(.v12)
     ],
+    products: [
+        .executable(name: "dgn-cloud-app", targets: ["Run"])
+    ],
     dependencies: [
         .package(url: "https://github.com/vapor/fluent.git", from: "4.7.1"),
         .package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.2.0"),
