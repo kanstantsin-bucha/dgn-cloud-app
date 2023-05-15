@@ -19,7 +19,7 @@ x-shared_environment: &shared_environment
   
 services:
   app:
-    image: docker.io/library/dgn-cloud.app:latest
+    image: docker.io/kanstantsinbucha/dg:dgn-cloud.app
     build:
       context: .
     environment:
