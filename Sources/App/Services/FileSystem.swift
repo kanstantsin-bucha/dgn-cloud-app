@@ -23,7 +23,7 @@ public final class FileSystem: Service {
     public func configureWith(_ app: Application) {
         switch app.environment {
         case .production:
-            workingDirectory = "/var/www/dg-cloud"
+            workingDirectory = "/app"
             
         default:
             workingDirectory = URL(fileURLWithPath: String(#filePath))
