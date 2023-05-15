@@ -13,7 +13,7 @@ enum DB {
         tls.certificateVerification = .none
         app.databases.use(
             .mysql(
-                hostname: "127.0.0.1",
+                hostname: "host.docker.internal",
                 username: "dg_cloud_user",
                 password: "openWorld$3ToOpportunity#2",
                 database: "dg_cloud_database",

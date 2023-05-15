@@ -16,7 +16,7 @@ public enum FileSystemStorage: String {
 
 public final class FileSystem: Service {
     private var workingDirectory = ""
-    public var serverFilesPath: String { workingDirectory + "/serverFiles" }
+    public var serverFilesPath: String { workingDirectory + "/ServerFiles" }
     
     public init() {}
     

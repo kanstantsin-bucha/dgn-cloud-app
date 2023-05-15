@@ -67,4 +67,4 @@ EXPOSE 4040
 
 # Start the Vapor service when the image is run, default to listening on 4040 in production environment
 ENTRYPOINT ["./dgn-cloud-app"]
-CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "4040", "--network=\"host\""]
+CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "4040"]
