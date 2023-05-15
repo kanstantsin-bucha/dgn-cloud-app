@@ -88,7 +88,7 @@ public struct DeviceReportsController: RouteCollection {
             .limit(1500)
             .all()
         let deflated = deflateArray(dbModels, maxElements: maxReportsCount)
-        return try deflated.map { DeviceReportAPIModel($0) }
+        return deflated.map { DeviceReportAPIModel($0) }
     }
     
     // MARK: - Private methods
