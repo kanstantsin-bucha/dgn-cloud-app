@@ -1,6 +1,15 @@
 version: '3.7'
 
+# On linux we use the "host" network
+# because the sql server bond to 127.0.0.1
+# and used by site cms too
+# so we can't setup it to handle requests on
+# host-gateway interface
+ 
 services:
   app:
     restart: always 
+    network_mode: "host"
+    extra_hosts:
+      - "host.docker.internal:127.0.0.1"
 

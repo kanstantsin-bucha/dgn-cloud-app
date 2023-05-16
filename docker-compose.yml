@@ -14,12 +14,17 @@
 #
 version: '3.7'
 
+# On mac we use the "bridge" network
+# because the sql server can handle requests on
+# host-gateway interface
+
 x-shared_environment: &shared_environment
   LOG_LEVEL: ${LOG_LEVEL:-debug}
   
 services:
   app:
     image: docker.io/kanstantsinbucha/dg:dgn-cloud.app
+    platform: linux/amd64
     build:
       context: .
     environment:
