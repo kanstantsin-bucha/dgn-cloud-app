@@ -11,9 +11,19 @@ enum DB {
     static func connectDatabase(_ app: Application) throws {
         var tls = TLSConfiguration.makeClientConfiguration()
         tls.certificateVerification = .none
+        
+        let hostname: String
+        switch app.environment {
+        case .production:
+            hostname = "host.docker.internal"
+            
+        default:
+            hostname = "127.0.0.1"
+        }
+            
         app.databases.use(
             .mysql(
-                hostname: "host.docker.internal",
+                hostname: hostname,
                 username: "dg_cloud_user",
                 password: "openWorld$3ToOpportunity#2",
                 database: "dg_cloud_database",
