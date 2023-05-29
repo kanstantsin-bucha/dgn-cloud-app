@@ -2,24 +2,24 @@
 
 The idea behind the device is to eveluate the measured values from the environment to produce the state result 
 
-The device have several states of the environment
+The environment have several states of the environment
 *  good 
 *  warning
 *  danger 
 *  alarm
 
-The device can notify user about the actual state by light's flashes on the sensor enclosure and sound that it can produce
-*  good each 30s, no Sound, Lights 1s
-Warning each 10s, no Sound, Lights 2s
-Danger
-each 10s, single Beep in sync with Lights 3s
-Alarm
-permanent Beep and Lights **light blue** or **green** flashes each 30 sec (if device battery is charging)
-*  warning **yellow flashes** each 15 sec
-*  danger **red flashes** and beep sound each 15 sec
-*  alarm
+To evaluate the state, we use the ranges of control parameters from the table below: 
 
 A..<B is a Range - It describes an interval that includes A and all values between A and B. It does not include B
 A..B is a ClosedRange -  It describes an interval that includes A, all values between A and B, B
+      
+### Evaluation intervals v 0.9.0
+      
+| Qualification | IAQ | Temp,C | Humidity, % | Pressure, hPa | CO, ppm | CO2, ppm | bVOC, ppm |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Good | 0..<100 | 16…35 | 20…65 | 980…1030 | 0…<10 | 0..<1200 | 0..<3 |
+| Warning | 100..<250 | 10…45 | 0…100 | 790…1215 | 10..<20 | 1200..<2500 | 3..<10 |
+| Danger | 250..<400 | 0…55 | N/A | 650…1417 | 20..<40 | 2500..<5000 | 10..<20 |
+| Alarm | Other | Other | Other | Other | Other | Other | Other |
       
       
