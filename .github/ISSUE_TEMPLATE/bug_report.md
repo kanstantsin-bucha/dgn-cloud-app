@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-## Describe the bug**
+## Describe the bug
 <!--
 A clear and concise description of what the bug is.
 -->
@@ -25,13 +25,27 @@ Steps to reproduce the behavior:
 
 ## Actual behavior
 <!--
-A clear and concise description of what happen.
+A clear and concise description of what happened.
 -->
+
+*
 
 ## Expected behavior
 <!--
 A clear and concise description of what you expected to happen.
 -->
+
+*
+
+## Reproduceability and Impact
+
+- [ ] When happend It blocks User
+
+Does it happen regularly?
+- [ ] Always
+- [ ] 50%
+- [ ] 10%
+- [ ] Very rarely
 
 ## Context 
 <!--
