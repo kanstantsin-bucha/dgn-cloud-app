@@ -43,9 +43,11 @@ A clear and concise description of what you expected to happen.
 
 Does it happen regularly?
 - [ ] Always
+- [ ] 75%
 - [ ] 50%
+- [ ] 25%
 - [ ] 10%
-- [ ] Very rarely
+- [ ] Once in a while
 
 ## Context 
 <!--
