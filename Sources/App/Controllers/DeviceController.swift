@@ -40,12 +40,13 @@ struct DeviceController: RouteCollection {
     func addDevice(req: Request) async throws -> MeAPIModel {
         let user = try req.auth.require(UserDBModel.self)
         let createDeviceAPIModel = try req.content.decode(CreateDeviceAPIModel.self)
-        try await verifyThatCanAdd(
+        
+        try await verifyThatNotDuplicate(
             deviceID: createDeviceAPIModel.deviceID,
             user: user,
             db: req.db
         )
-        
+
         let model = DeviceAliasDBModel(createDeviceAPIModel)
         guard let deviceAliasID = model.id else { throw Abort(.internalServerError) }
         try await model.create(on: req.db)
@@ -64,7 +65,10 @@ struct DeviceController: RouteCollection {
         )
     }
     
-    private func verifyThatCanAdd(deviceID: String, user: UserDBModel, db: Database) async throws {
+    private func verifyThatNotDuplicate(
+        deviceID: String, user: UserDBModel,
+        db: Database
+    ) async throws {
         guard let aliasesIDs = user.deviceAliasIDs, !aliasesIDs.isEmpty else {
             return
         }

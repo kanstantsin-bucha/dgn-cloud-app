@@ -8,9 +8,14 @@ public func configure(_ app: Application) throws {
     try DB.connectDatabase(app)
     try JWT.attachSigners(app, keyName: "key")
 
-    app.http.server.configuration.port = 4040
     // Uncomment to serve requests from local network
-//    app.http.server.configuration.address = .hostname("192.168.0.192", port: 4040)
+    switch app.environment {
+    case .development:
+        app.http.server.configuration.address = .hostname("192.168.0.192", port: 4040)
+    default:
+        app.http.server.configuration.port = 4040
+    }
+    
     app.routes.defaultMaxBodySize = "500kb"
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
