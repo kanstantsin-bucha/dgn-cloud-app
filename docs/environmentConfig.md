@@ -1,4 +1,4 @@
-# Environment config
+# Environment config v1.0.2
 
 The idea behind the device is to eveluate the measured values from the environment to produce the state result 
 
@@ -19,7 +19,7 @@ A..B is a ClosedRange -  It describes an interval that includes A, all values be
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | Good | 0..<120 | 16…35 | 15…70 | 960…1060 | 0…<10 | 0..<1500 | 0..<20 |
 | Warning | 120..<350 | 0…55 | 0…100 | 650…1417 | 10..<20 | 1500..<10000 | 20..<70 |
-| Danger | 350..<450 | Other | N/A | Other | 20..<40 | N/A | Other |
-| Alarm | Other | N/A | N/A | N/A | Other | N/A | N/A |
+| Danger | Other | Other | N/A | Other | 20..<40 | N/A | Other |
+| Alarm | N/A | N/A | N/A | N/A | Other | N/A | N/A |
       
 IAQ* is not evaluated on the device, only in mobile app     
