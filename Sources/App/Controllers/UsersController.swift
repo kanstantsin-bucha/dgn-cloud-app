@@ -55,14 +55,6 @@ struct UserController: RouteCollection {
             }
     }
     
-    func get(req: Request) throws -> EventLoopFuture<UserDBModel> {
-        print ("entered users get")
-        return UserDBModel.query(on: req.db)
-            .filter(\.$userName == req.parameters.get ("userName") ?? "NA")
-            .first()
-            .unwrap(or: Abort(.notFound))
-    }
-    
     func create(req: Request) async throws -> MeAPIModel {
         let createUserAPI = try req.content.decode(CreateUserAPIModel.self)
         let user = try UserDBModel(createUserAPI)
